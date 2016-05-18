@@ -9,6 +9,8 @@ HunterGate(
 
 project(autobahn-cpp VERSION 0.2.0)
 
+option(AUTOBAHN_CPP_BUILD_EXAMPLES "Build examples" OFF)
+
 hunter_add_package(Boost COMPONENTS program_options system thread random)
 hunter_add_package(websocketpp)
 hunter_add_package(msgpack)
@@ -163,4 +165,6 @@ foreach(h ${PUBLIC_HEADERS})
 endforeach()
 
 
-# add_subdirectory(examples)
+if(AUTOBAHN_CPP_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
