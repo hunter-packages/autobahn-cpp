@@ -1,10 +1,21 @@
 # Use this for installing AutobahnCpp into <prefix>/include.
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
-project(autobahn-cpp)
+include("cmake/HunterGate.cmake")
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.14.21.tar.gz"
+    SHA1 "fd3234cfd4fed08ab142a3e244670d1ec70480e5"
+)
+
+project(autobahn-cpp VERSION 0.2.0)
+
+hunter_add_package(Boost COMPONENTS program_options system thread random)
+hunter_add_package(websocketpp)
+hunter_add_package(msgpack)
+hunter_add_package(OpenSSL)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "-stdlib=libc++ -Wno-unused-local-typedefs -Wno-unknown-warning-option ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-Wno-unused-local-typedefs -Wno-unknown-warning-option ${CMAKE_CXX_FLAGS}")
     if ("${CMAKE_GENERATOR}" STREQUAL "Ninja")
         set(CMAKE_CXX_FLAGS "-fcolor-diagnostics ${CMAKE_CXX_FLAGS}")
     endif()
@@ -21,18 +32,22 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 endif()
 
 if(NOT MSVC)
-    set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Werror -Wno-unused-variable ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-Wall -Werror -Wno-unused-variable ${CMAKE_CXX_FLAGS}")
 endif()
 
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-find_package(Boost REQUIRED COMPONENTS program_options system thread random)
-find_package(Websocketpp REQUIRED)
-find_package(Msgpack REQUIRED)
-find_package(Threads REQUIRED)
+find_package(Boost CONFIG REQUIRED COMPONENTS program_options system thread random)
+find_package(websocketpp CONFIG REQUIRED)
+find_package(msgpack CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
+
+
+set(include_install_dir "include")
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
 
 set(PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/autobahn/autobahn.hpp
@@ -92,6 +107,52 @@ set(PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/autobahn/wamp_websocketpp_websocket_transport.ipp
     )
 
+add_library(autobahn-cpp INTERFACE)
+target_link_libraries(autobahn-cpp INTERFACE
+  Boost::program_options
+  Boost::system
+  Boost::thread
+  Boost::random
+  websocketpp::websocketpp
+  msgpack::msgpack
+  OpenSSL::Crypto
+  OpenSSL::SSL
+  Threads::Threads)
+
+target_include_directories(autobahn-cpp INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:${include_install_dir}>)
+
+set(config_export_name "${PROJECT_NAME}Config")
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(project_config "${CMAKE_CURRENT_BINARY_DIR}/${config_export_name}.cmake")
+set(version_config "${CMAKE_CURRENT_BINARY_DIR}/${config_export_name}Version.cmake")
+set(namespace "${PROJECT_NAME}::")
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file( # Uses target_exports_name
+    "cmake/Config.cmake.in"
+    "${project_config}"
+    INSTALL_DESTINATION "${config_install_dir}"
+)
+write_basic_package_version_file(
+  "${version_config}" COMPATIBILITY SameMajorVersion)
+
+install(
+  TARGETS autobahn-cpp
+  EXPORT "${targets_export_name}"
+  INCLUDES DESTINATION "${include_install_dir}")
+
+install(
+  EXPORT "${targets_export_name}"
+  NAMESPACE "${namespace}"
+  DESTINATION "${config_install_dir}")
+
+install(
+  FILES "${project_config}" "${version_config}"
+  DESTINATION "${config_install_dir}")
+
+
 foreach(h ${PUBLIC_HEADERS})
     string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "include/" include "${h}")
     get_filename_component(HEADER_INCLUDE_DIRECTORY ${include} DIRECTORY)
@@ -100,4 +161,5 @@ foreach(h ${PUBLIC_HEADERS})
         COMPONENT "headers")
 endforeach()
 
-add_subdirectory(examples)
+
+# add_subdirectory(examples)
