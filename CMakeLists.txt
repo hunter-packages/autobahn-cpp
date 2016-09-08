@@ -11,7 +11,7 @@ project(autobahn-cpp VERSION 0.2.0)
 
 option(AUTOBAHN_CPP_BUILD_EXAMPLES "Build examples" OFF)
 
-hunter_add_package(Boost COMPONENTS program_options system thread random)
+hunter_add_package(Boost COMPONENTS program_options system chrono thread random)
 hunter_add_package(websocketpp)
 hunter_add_package(msgpack)
 hunter_add_package(OpenSSL)
