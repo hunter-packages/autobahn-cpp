@@ -114,6 +114,7 @@ add_library(autobahn-cpp INTERFACE)
 target_link_libraries(autobahn-cpp INTERFACE
   Boost::program_options
   Boost::system
+  Boost::chrono
   Boost::thread
   Boost::random
   websocketpp::websocketpp
