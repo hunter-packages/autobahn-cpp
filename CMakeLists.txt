@@ -41,11 +41,10 @@ set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-find_package(Boost CONFIG REQUIRED COMPONENTS program_options system thread random)
+find_package(Boost CONFIG REQUIRED COMPONENTS program_options chrono system thread random)
 find_package(websocketpp CONFIG REQUIRED)
 find_package(msgpack CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Threads REQUIRED)
 
 
 set(include_install_dir "include")
@@ -120,8 +119,7 @@ target_link_libraries(autobahn-cpp INTERFACE
   websocketpp::websocketpp
   msgpack::msgpack
   OpenSSL::Crypto
-  OpenSSL::SSL
-  Threads::Threads)
+  OpenSSL::SSL)
 
 target_include_directories(autobahn-cpp INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
