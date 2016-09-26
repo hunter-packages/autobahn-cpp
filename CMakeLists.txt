@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.1)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.15.26.tar.gz"
-    SHA1 "7e292fcda36d4cf1214bd4bd8d2360d66fa44395"
+    URL "https://github.com/ruslo/hunter/archive/v0.15.31.tar.gz"
+    SHA1 "63a9348c1d9c3f5c27e1585b2d9e876e3f245f11"
     )
 
 project(autobahn-cpp VERSION 0.2.0)
@@ -45,7 +45,6 @@ find_package(Boost CONFIG REQUIRED COMPONENTS program_options system thread rand
 find_package(websocketpp CONFIG REQUIRED)
 find_package(msgpack CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Threads REQUIRED)
 
 
 set(include_install_dir "include")
@@ -119,8 +118,7 @@ target_link_libraries(autobahn-cpp INTERFACE
   websocketpp::websocketpp
   msgpack::msgpack
   OpenSSL::Crypto
-  OpenSSL::SSL
-  Threads::Threads)
+  OpenSSL::SSL)
 
 target_include_directories(autobahn-cpp INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
