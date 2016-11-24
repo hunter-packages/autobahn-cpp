@@ -1,11 +1,10 @@
 @PACKAGE_INIT@
 
 
-find_package(Boost CONFIG REQUIRED COMPONENTS program_options system thread random)
+find_package(Boost CONFIG REQUIRED COMPONENTS program_options system chrono thread random)
 find_package(websocketpp CONFIG REQUIRED)
 find_package(msgpack CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Threads REQUIRED)
 
 
 include("${CMAKE_CURRENT_LIST_DIR}/@targets_export_name@.cmake")

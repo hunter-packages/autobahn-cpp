@@ -11,7 +11,7 @@ project(autobahn-cpp VERSION 0.2.0)
 
 option(AUTOBAHN_CPP_BUILD_EXAMPLES "Build examples" OFF)
 
-hunter_add_package(Boost COMPONENTS program_options system thread random)
+hunter_add_package(Boost COMPONENTS program_options system chrono thread random)
 hunter_add_package(websocketpp)
 hunter_add_package(msgpack)
 hunter_add_package(OpenSSL)
@@ -41,7 +41,7 @@ set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
-find_package(Boost CONFIG REQUIRED COMPONENTS program_options system thread random)
+find_package(Boost CONFIG REQUIRED COMPONENTS program_options chrono system thread random)
 find_package(websocketpp CONFIG REQUIRED)
 find_package(msgpack CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
@@ -113,6 +113,7 @@ add_library(autobahn-cpp INTERFACE)
 target_link_libraries(autobahn-cpp INTERFACE
   Boost::program_options
   Boost::system
+  Boost::chrono
   Boost::thread
   Boost::random
   websocketpp::websocketpp
